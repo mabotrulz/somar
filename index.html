@@ -183,7 +183,7 @@ function checkAnswer(selected,correct){
     document.getElementById('feedback').className='feedback ok';
     chosen.classList.add('correct');
     document.getElementById('equation').textContent=document.getElementById('equation').textContent.replace('?',correct);
-    speak(a + ' ' + charA.name + ' mais ' + b + ' ' + charB.name, 'pt-PT');
+    speak(currentA + ' ' + currentCharA.name + ' mais ' + currentB + ' ' + currentCharB.name, 'pt-PT');
     setTimeout(loadRound,1500);
   }else{
     sfxWrong();
