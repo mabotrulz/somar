@@ -78,6 +78,7 @@ const PP_CHARS = [
 ];
 
 let score=0,roundNum=0,audioInit=false,audioCtx=null;
+let currentA, currentB, currentCharA, currentCharB;
 const TOTAL_ROUNDS=10;
 
 function initAudio(){if(audioInit)return;audioInit=true;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
@@ -113,6 +114,7 @@ function loadRound(){
   var charA=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
   var charB=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
   
+  currentA=a;currentB=b;currentCharA=charA;currentCharB=charB;
   document.getElementById('equation').textContent=a+' + '+b+' = ?';
   
   // Show character copies
