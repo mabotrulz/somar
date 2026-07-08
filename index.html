@@ -149,12 +149,9 @@ function loadRound(){
   document.getElementById('feedback').textContent='';
 }
 
-function buildPokeCol(char,count){
+function buildPokeCol(char, count){
   var col=document.createElement('div');
   col.className='poke-col';
-  var label=document.createElement('div');
-  label.className='label';label.textContent=char.name;
-  col.appendChild(label);
   var copies=document.createElement('div');
   copies.className='copies';
   for(var i=0;i<count;i++){
@@ -164,6 +161,9 @@ function buildPokeCol(char,count){
     copies.appendChild(img);
   }
   col.appendChild(copies);
+  var label=document.createElement('div');
+  label.className='label';label.textContent=count;
+  col.appendChild(label);
   return col;
 }
 
@@ -181,7 +181,7 @@ function checkAnswer(selected,correct){
     document.getElementById('feedback').className='feedback ok';
     chosen.classList.add('correct');
     document.getElementById('equation').textContent=document.getElementById('equation').textContent.replace('?',correct);
-    speak(correct.toString(),'pt-PT');
+    speak(a + ' ' + charA.name + ' mais ' + b + ' ' + charB.name, 'pt-PT');
     setTimeout(loadRound,1500);
   }else{
     sfxWrong();
