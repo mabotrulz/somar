@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Somar — PAW Patrol</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#1a1a2e;font-family:'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100dvh;overflow:hidden;user-select:none}
+  .game{width:100vw;height:100dvh;max-width:600px;background:linear-gradient(180deg,#1a1a2e,#16213e,#0f3460);display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .header{text-align:center;padding:8px 12px 4px;flex-shrink:0;display:flex;justify-content:space-between;color:#888;font-size:clamp(12px,2.5vw,14px)}
+  .header .score{color:#4ecca3;font-weight:700}
+  
+  .arena{flex:1.5;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 8px;position:relative;overflow:hidden}
+  .equation{font-size:clamp(22px,5.5vw,38px);font-weight:800;color:#f1c40f;margin-bottom:4px}
+  .poke-rows{display:flex;justify-content:center;gap:clamp(16px,5vw,40px);width:100%;flex-shrink:0}
+  .poke-col{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .poke-col .label{font-size:clamp(18px,4vw,28px);font-weight:700;color:#f1c40f}
+  .poke-col .copies{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+  .poke-col .copies img{width:clamp(32px,7vw,52px);height:clamp(32px,7vw,52px);object-fit:contain;animation:popIn 0.25s ease;background:rgba(255,255,255,0.05);border-radius:8px;padding:2px}
+  @keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .plus{font-size:clamp(28px,7vw,48px);color:#f1c40f;display:flex;align-items:center;margin:0 4px}
+  .equals{font-size:clamp(28px,7vw,48px);color:#4ecca3;display:flex;align-items:center;margin:0 4px}
+  
+  .options{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(6px,2vw,12px);padding:8px 16px 16px;flex-shrink:0}
+  .opt{padding:clamp(14px,3vw,20px);border-radius:14px;border:3px solid #333;background:#16213e;color:#eee;font-size:clamp(24px,6vw,40px);font-weight:700;text-align:center;cursor:pointer;transition:all 0.15s}
+  .opt:hover{border-color:#4ecca3}
+  .opt.correct{border-color:#4ecca3;background:rgba(78,204,163,0.2);animation:correctPulse 0.4s ease}
+  .opt.wrong{border-color:#e74c3c;background:rgba(231,76,60,0.2);animation:shake 0.35s ease}
+  @keyframes correctPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+  
+  .feedback{text-align:center;padding:2px 12px;min-height:24px;flex-shrink:0;font-size:clamp(14px,3vw,20px);font-weight:600}
+  .feedback.ok{color:#4ecca3}.feedback.fail{color:#e74c3c}
+  
+  .win-overlay{position:absolute;inset:0;z-index:100;background:rgba(15,52,96,0.93);display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity 0.5s;padding:30px;text-align:center}
+  .win-overlay.active{opacity:1;pointer-events:all}
+  .win-overlay h2{font-size:clamp(28px,8vw,48px);color:#4ecca3}
+  .win-overlay button{padding:12px 36px;font-size:clamp(14px,3vw,18px);font-weight:700;background:#4ecca3;color:#1a1a2e;border:none;border-radius:12px;cursor:pointer;margin-top:12px}
+  
+  .start-overlay{position:absolute;inset:0;z-index:200;background:rgba(15,52,96,0.95);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px;text-align:center;transition:opacity 0.5s}
+  .start-overlay.hidden{opacity:0;pointer-events:none}
+  .start-overlay h2{font-size:clamp(24px,7vw,40px);color:#f1c40f}
+  .start-overlay .start-btn{padding:16px 48px;font-size:clamp(18px,4vw,24px);font-weight:700;background:linear-gradient(135deg,#f1c40f,#f39c12);color:#1a1a2e;border:none;border-radius:16px;cursor:pointer;letter-spacing:2px;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="game">
+  <div class="header">
+    <span>➕ Somar</span>
+    <span class="score" id="scoreDisplay">0 ⭐</span>
+  </div>
+  <div class="arena" id="arena">
+    <div class="equation" id="equation">1 + 2 = ?</div>
+    <div class="poke-rows" id="pokeRows"></div>
+  </div>
+  <div class="options" id="options"></div>
+  <div class="feedback" id="feedback"></div>
+  <div class="win-overlay" id="winOverlay">
+    <h2>🏆 Parabéns!</h2>
+    <button onclick="restartGame()">Jogar outra vez →</button>
+  </div>
+  <div class="start-overlay" id="startOverlay">
+    <div style="font-size:clamp(50px,14vw,80px);margin-bottom:8px">🐾</div>
+    <h2>Somar</h2>
+    <p>Resolve as somas com a PAW Patrol!</p>
+    <button class="start-btn" onclick="startGame()">▶ COMEÇAR</button>
+  </div>
+</div>
+<script>
+const PP_CHARS = [
+  {name:'Chase',file:'chase.png'},
+  {name:'Marshall',file:'marshall.png'},
+  {name:'Skye',file:'skye.png'},
+  {name:'Rubble',file:'rubble.png'},
+  {name:'Rocky',file:'rocky.png'},
+  {name:'Zuma',file:'zuma.png'},
+];
+
+let score=0,roundNum=0,audioInit=false,audioCtx=null;
+const TOTAL_ROUNDS=10;
+
+function initAudio(){if(audioInit)return;audioInit=true;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
+
+function speak(text,lang,cb){
+  if(!window.speechSynthesis){if(cb)cb();return}
+  window.speechSynthesis.cancel();
+  var u=new SpeechSynthesisUtterance(text);
+  u.lang=lang||'pt-PT';u.rate=0.85;
+  if(cb)u.onend=cb;
+  window.speechSynthesis.speak(u);
+}
+
+function sfxCorrect(){try{if(!audioCtx)return;var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='triangle';o.frequency.setValueAtTime(523,audioCtx.currentTime);o.frequency.linearRampToValueAtTime(784,audioCtx.currentTime+0.15);g.gain.setValueAtTime(0.15,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.2)}catch(e){}}
+function sfxWrong(){try{if(!audioCtx)return;var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='square';o.frequency.value=180;g.gain.setValueAtTime(0.12,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.2);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.2)}catch(e){}}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
+
+function startGame(){
+  initAudio();
+  document.getElementById('startOverlay').classList.add('hidden');
+  document.getElementById('winOverlay').classList.remove('active');
+  score=0;roundNum=0;
+  document.getElementById('scoreDisplay').textContent='0 ⭐';
+  loadRound();
+}
+
+function loadRound(){
+  if(roundNum>=TOTAL_ROUNDS){document.getElementById('winOverlay').classList.add('active');speak('Parabéns! Completaste as somas!');return}
+  roundNum++;
+  var a=Math.floor(Math.random()*11),b=Math.floor(Math.random()*11);
+  var correct=a+b;
+  var charA=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
+  var charB=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
+  
+  document.getElementById('equation').textContent=a+' + '+b+' = ?';
+  
+  // Show character copies
+  var rows=document.getElementById('pokeRows');
+  rows.innerHTML='';
+  rows.appendChild(buildPokeCol(charA,a));
+  
+  var plusDiv=document.createElement('div');
+  plusDiv.className='plus';plusDiv.textContent='+';
+  rows.appendChild(plusDiv);
+  
+  rows.appendChild(buildPokeCol(charB,b));
+  
+  var eqDiv=document.createElement('div');
+  eqDiv.className='equals';eqDiv.textContent='=?';
+  rows.appendChild(eqDiv);
+  
+  // Options
+  var opts=[correct];
+  while(opts.length<4){var r=Math.floor(Math.random()*21);if(!opts.includes(r)&&r>=0&&r<=20)opts.push(r)}
+  opts=shuffle(opts);
+  
+  const optDiv=document.getElementById('options');
+  optDiv.innerHTML='';
+  opts.forEach(n=>{
+    var div=document.createElement('div');
+    div.className='opt';
+    div.textContent=n;
+    div.dataset.value=n;
+    div.addEventListener('click',function(){checkAnswer(parseInt(this.dataset.value),correct);});
+    optDiv.appendChild(div);
+  });
+  
+  document.getElementById('feedback').textContent='';
+}
+
+function buildPokeCol(char,count){
+  var col=document.createElement('div');
+  col.className='poke-col';
+  var label=document.createElement('div');
+  label.className='label';label.textContent=char.name;
+  col.appendChild(label);
+  var copies=document.createElement('div');
+  copies.className='copies';
+  for(var i=0;i<count;i++){
+    var img=document.createElement('img');
+    img.src='assets/'+char.file;
+    img.style.animationDelay=(i*0.05)+'s';
+    copies.appendChild(img);
+  }
+  col.appendChild(copies);
+  return col;
+}
+
+function checkAnswer(selected,correct){
+  const opts=document.querySelectorAll('.opt');
+  let chosen=null;
+  opts.forEach(o=>{if(parseInt(o.dataset.value)===selected)chosen=o});
+  if(!chosen)return;
+  
+  if(selected===correct){
+    sfxCorrect();
+    score++;
+    document.getElementById('scoreDisplay').textContent=score+' ⭐';
+    document.getElementById('feedback').textContent='✅ '+correct+'!';
+    document.getElementById('feedback').className='feedback ok';
+    chosen.classList.add('correct');
+    document.getElementById('equation').textContent=document.getElementById('equation').textContent.replace('?',correct);
+    speak(correct.toString(),'pt-PT');
+    setTimeout(loadRound,1500);
+  }else{
+    sfxWrong();
+    chosen.classList.add('wrong');
+    document.getElementById('feedback').textContent='❌ Tenta outra vez!';
+    document.getElementById('feedback').className='feedback fail';
+    setTimeout(function(){chosen.classList.remove('wrong')},400);
+  }
+}
+
+function restartGame(){startGame()}
+</script>
+</body>
+</html>
