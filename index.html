@@ -12,15 +12,15 @@
   .header .score{color:#4ecca3;font-weight:700}
   
   .arena{flex:1.5;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 8px;position:relative;overflow:hidden}
-  .equation{font-size:clamp(22px,5.5vw,38px);font-weight:800;color:#f1c40f;margin-bottom:4px}
-  .poke-rows{display:flex;justify-content:center;gap:clamp(16px,5vw,40px);width:100%;flex-shrink:0}
-  .poke-col{display:flex;flex-direction:column;align-items:center;gap:2px}
-  .poke-col .label{font-size:clamp(18px,4vw,28px);font-weight:700;color:#f1c40f}
-  .poke-col .copies{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
-  .poke-col .copies img{width:clamp(32px,7vw,52px);height:clamp(32px,7vw,52px);object-fit:contain;animation:popIn 0.25s ease;background:rgba(255,255,255,0.05);border-radius:8px;padding:2px}
-  @keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
-  .plus{font-size:clamp(28px,7vw,48px);color:#f1c40f;display:flex;align-items:center;margin:0 4px}
-  .equals{font-size:clamp(28px,7vw,48px);color:#4ecca3;display:flex;align-items:center;margin:0 4px}
+  .equation{font-size:clamp(28px,7vw,48px);font-weight:800;color:#f1c40f;margin-bottom:4px}
+  .poke-rows{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.5vw,12px);width:100%}
+  .poke-row{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,16px)}
+  .poke-group{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:clamp(2px,0.5vw,4px);align-items:center}
+  .poke-group img{width:clamp(50px,12vw,85px);height:clamp(50px,12vw,85px);object-fit:contain;animation:popIn 0.2s ease;background:rgba(255,255,255,0.05);border-radius:10px;padding:3px}
+  .poke-op{display:flex;flex-direction:column;align-items:center;gap:2px}
+  .poke-op .label{font-size:clamp(20px,5vw,32px);font-weight:700;color:#f1c40f;margin-top:2px}
+  .plus-sign{font-size:clamp(36px,9vw,60px);color:#f1c40f;font-weight:700;padding:0 4px;align-self:center}
+  .eq-sign{font-size:clamp(36px,9vw,60px);color:#4ecca3;font-weight:700;padding:0 4px;align-self:center}
   
   .options{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(6px,2vw,12px);padding:8px 16px 16px;flex-shrink:0}
   .opt{padding:clamp(14px,3vw,20px);border-radius:14px;border:3px solid #333;background:#16213e;color:#eee;font-size:clamp(24px,6vw,40px);font-weight:700;text-align:center;cursor:pointer;transition:all 0.15s}
@@ -118,20 +118,21 @@ function loadRound(){
   document.getElementById('equation').textContent=a+' + '+b+' = ?';
   speak(a + ' ' + charA.name + ' mais ' + b + ' ' + charB.name + '?', 'pt-PT');
   
-  // Show character copies
+  // Show character copies — each operand in its own row
   var rows=document.getElementById('pokeRows');
   rows.innerHTML='';
-  rows.appendChild(buildPokeCol(charA,a));
   
-  var plusDiv=document.createElement('div');
-  plusDiv.className='plus';plusDiv.textContent='+';
-  rows.appendChild(plusDiv);
-  
-  rows.appendChild(buildPokeCol(charB,b));
-  
-  var eqDiv=document.createElement('div');
-  eqDiv.className='equals';eqDiv.textContent='=?';
-  rows.appendChild(eqDiv);
+  var rowA=document.createElement('div');
+  rowA.className='poke-row';
+  rowA.appendChild(buildPokeCol(charA,a));
+  var plus=document.createElement('div');
+  plus.className='plus-sign';plus.textContent='+';
+  rowA.appendChild(plus);
+  rowA.appendChild(buildPokeCol(charB,b));
+  var eq=document.createElement('div');
+  eq.className='eq-sign';eq.textContent='?';
+  rowA.appendChild(eq);
+  rows.appendChild(rowA);
   
   // Options
   var opts=[correct];
@@ -153,21 +154,18 @@ function loadRound(){
 }
 
 function buildPokeCol(char, count){
-  var col=document.createElement('div');
-  col.className='poke-col';
-  var copies=document.createElement('div');
-  copies.className='copies';
+  var group=document.createElement('div');
+  group.className='poke-group';
   for(var i=0;i<count;i++){
     var img=document.createElement('img');
     img.src='assets/'+char.file;
     img.style.animationDelay=(i*0.05)+'s';
-    copies.appendChild(img);
+    group.appendChild(img);
   }
-  col.appendChild(copies);
   var label=document.createElement('div');
   label.className='label';label.textContent=count;
-  col.appendChild(label);
-  return col;
+  group.appendChild(label);
+  return group;
 }
 
 function checkAnswer(selected,correct){
