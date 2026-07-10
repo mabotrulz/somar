@@ -109,7 +109,7 @@ function startGame(){
 function loadRound(){
   if(roundNum>=TOTAL_ROUNDS){document.getElementById('winOverlay').classList.add('active');speak('Parabéns! Completaste as somas!');return}
   roundNum++;
-  var a=Math.floor(Math.random()*11),b=Math.floor(Math.random()*11);
+  var a=Math.floor(Math.random()*6),b=Math.floor(Math.random()*6);
   var correct=a+b;
   var charA=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
   var charB=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
@@ -135,7 +135,7 @@ function loadRound(){
   
   // Options
   var opts=[correct];
-  while(opts.length<4){var r=Math.floor(Math.random()*21);if(!opts.includes(r)&&r>=0&&r<=20)opts.push(r)}
+  while(opts.length<4){var r=Math.floor(Math.random()*11);if(!opts.includes(r)&&r>=0&&r<=10)opts.push(r)}
   opts=shuffle(opts);
   
   const optDiv=document.getElementById('options');
