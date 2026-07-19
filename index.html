@@ -6,32 +6,41 @@
 <title>Somar — PAW Patrol</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#1a1a2e;font-family:'Segoe UI',sans-serif;display:flex;justify-content:center;align-items:center;min-height:100dvh;overflow:hidden;user-select:none}
-  .game{width:100vw;height:100dvh;max-width:600px;background:linear-gradient(180deg,#1a1a2e,#16213e,#0f3460);display:flex;flex-direction:column;position:relative;overflow:hidden}
-  .header{text-align:center;padding:8px 12px 4px;flex-shrink:0;display:flex;justify-content:space-between;color:#888;font-size:clamp(12px,2.5vw,14px)}
-  .header .score{color:#4ecca3;font-weight:700}
+  body{background:#2d1b4e;font-family:'Baloo 2','Comic Sans MS','Chalkboard SE',system-ui,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100dvh;overflow:hidden;user-select:none}
+  .game{width:100vw;height:100dvh;max-width:600px;background:linear-gradient(180deg,#6c5ce7 0%,#a55eea 45%,#fd79a8 100%);display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .header{text-align:center;padding:10px 14px 4px;flex-shrink:0;display:flex;justify-content:space-between;color:rgba(255,255,255,0.85);font-size:clamp(14px,3.5vw,17px);font-weight:700}
+  .header .score{color:#ffe259;font-weight:800}
+
+  .arena{flex:1.5;display:flex;flex-direction:column;align-items:center;padding:4px 8px;position:relative;overflow-y:auto;overflow-x:hidden}
+  .poke-rows{display:flex;flex-direction:column;align-items:center;gap:clamp(8px,2vw,12px);width:100%;margin:auto}
+  .poke-card{display:flex;align-items:center;gap:clamp(8px,2.5vw,14px);background:rgba(255,255,255,0.18);border-radius:20px;padding:clamp(8px,2vw,12px) clamp(10px,3vw,16px);width:min(94%,440px);box-shadow:0 4px 0 rgba(0,0,0,0.1)}
+  .badge{min-width:clamp(44px,12vw,52px);height:clamp(44px,12vw,52px);border-radius:50%;background:#fff;color:#6c5ce7;font-size:clamp(26px,7vw,32px);font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 0 rgba(0,0,0,0.15);flex-shrink:0}
+  .poke-group{flex:1;display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(4px,1.2vw,8px);align-items:center}
+  .poke-group img{width:clamp(48px,13vw,72px);height:clamp(48px,13vw,72px);object-fit:contain;animation:popIn 0.2s ease}
+  @keyframes popIn{0%{transform:scale(0)}100%{transform:scale(1)}}
+  .op-sign{font-size:clamp(30px,8vw,38px);color:#fff;font-weight:800;text-shadow:0 3px 0 rgba(0,0,0,0.15);line-height:1}
+  .answer-bubble{width:clamp(56px,15vw,64px);height:clamp(56px,15vw,64px);border-radius:50%;background:#fff;color:#a55eea;font-size:clamp(32px,8vw,38px);font-weight:800;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,0,0,0.15);transition:all 0.3s}
+  .answer-bubble.win{background:#55efc4;color:#0a6b4f;transform:scale(1.12)}
+
+  /* Short screens (landscape phones, small windows): shrink to fit without scroll */
+  @media (max-height:650px){
+    .poke-group img{width:clamp(40px,10vw,56px);height:clamp(40px,10vw,56px)}
+    .badge{min-width:40px;height:40px;font-size:clamp(22px,5vw,26px)}
+    .op-sign{font-size:clamp(24px,6vw,30px)}
+    .answer-bubble{width:52px;height:52px;font-size:30px}
+    .poke-rows{gap:6px}
+  }
   
-  .arena{flex:1.5;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:4px 8px;position:relative;overflow:hidden}
-  .equation{font-size:clamp(28px,7vw,48px);font-weight:800;color:#f1c40f;margin-bottom:4px}
-  .poke-rows{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.5vw,12px);width:100%}
-  .poke-row{display:flex;align-items:center;justify-content:center;gap:clamp(8px,2vw,16px)}
-  .poke-group{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:clamp(2px,0.5vw,4px);align-items:center}
-  .poke-group img{width:clamp(50px,12vw,85px);height:clamp(50px,12vw,85px);object-fit:contain;animation:popIn 0.2s ease;background:rgba(255,255,255,0.05);border-radius:10px;padding:3px}
-  .poke-op{display:flex;flex-direction:column;align-items:center;gap:2px}
-  .poke-op .label{font-size:clamp(20px,5vw,32px);font-weight:700;color:#f1c40f;margin-top:2px}
-  .plus-sign{font-size:clamp(36px,9vw,60px);color:#f1c40f;font-weight:700;padding:0 4px;align-self:center}
-  .eq-sign{font-size:clamp(36px,9vw,60px);color:#4ecca3;font-weight:700;padding:0 4px;align-self:center}
-  
-  .options{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(6px,2vw,12px);padding:8px 16px 16px;flex-shrink:0}
-  .opt{padding:clamp(14px,3vw,20px);border-radius:14px;border:3px solid #333;background:#16213e;color:#eee;font-size:clamp(24px,6vw,40px);font-weight:700;text-align:center;cursor:pointer;transition:all 0.15s}
-  .opt:hover{border-color:#4ecca3}
-  .opt.correct{border-color:#4ecca3;background:rgba(78,204,163,0.2);animation:correctPulse 0.4s ease}
-  .opt.wrong{border-color:#e74c3c;background:rgba(231,76,60,0.2);animation:shake 0.35s ease}
+  .options{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(10px,2.5vw,14px);padding:8px 16px 16px;flex-shrink:0}
+  .opt{padding:clamp(14px,3.5vw,22px);border-radius:20px;border:4px solid transparent;background:#fff;color:#6c5ce7;font-size:clamp(30px,8vw,44px);font-weight:800;text-align:center;cursor:pointer;transition:all 0.15s;box-shadow:0 5px 0 rgba(0,0,0,0.15)}
+  .opt:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,0.15)}
+  .opt.correct{border-color:#00b894;background:#e0fff3;animation:correctPulse 0.4s ease}
+  .opt.wrong{border-color:#d63031;background:#ffe3e3;animation:shake 0.35s ease}
   @keyframes correctPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
   @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
   
-  .feedback{text-align:center;padding:2px 12px;min-height:24px;flex-shrink:0;font-size:clamp(14px,3vw,20px);font-weight:600}
-  .feedback.ok{color:#4ecca3}.feedback.fail{color:#e74c3c}
+  .feedback{text-align:center;padding:2px 12px;min-height:26px;flex-shrink:0;font-size:clamp(17px,4.5vw,24px);font-weight:800;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,0.15)}
+  .feedback.ok{color:#a9ffd9}.feedback.fail{color:#ffe0e0}
   
   .win-overlay{position:absolute;inset:0;z-index:100;background:rgba(15,52,96,0.93);display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:opacity 0.5s;padding:30px;text-align:center}
   .win-overlay.active{opacity:1;pointer-events:all}
@@ -42,6 +51,13 @@
   .start-overlay.hidden{opacity:0;pointer-events:none}
   .start-overlay h2{font-size:clamp(24px,7vw,40px);color:#f1c40f}
   .start-overlay .start-btn{padding:16px 48px;font-size:clamp(18px,4vw,24px);font-weight:700;background:linear-gradient(135deg,#f1c40f,#f39c12);color:#1a1a2e;border:none;border-radius:16px;cursor:pointer;letter-spacing:2px;margin-top:16px}
+
+  /* Short screens: shrink answer buttons too (must come after base .opt rules) */
+  @media (max-height:650px){
+    .opt{font-size:clamp(26px,7vw,36px);padding:10px}
+    .options{gap:8px;padding:6px 16px 10px}
+    .feedback{min-height:20px;font-size:clamp(15px,4vw,20px)}
+  }
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
 <style>
@@ -69,7 +85,6 @@
     <span class="score" id="scoreDisplay">0 ⭐</span>
   </div>
   <div class="arena" id="arena">
-    <div class="equation" id="equation">1 + 2 = ?</div>
     <div class="poke-rows" id="pokeRows"></div>
   </div>
   <div class="options" id="options"></div>
@@ -96,7 +111,7 @@ const PP_CHARS = [
 ];
 
 let score=0,roundNum=0,audioInit=false,audioCtx=null;
-let currentA, currentB, currentCharA, currentCharB;
+let currentA, currentB, currentCharA, currentCharB, ansBubble=null;
 const TOTAL_ROUNDS=10;
 
 function initAudio(){if(audioInit)return;audioInit=true;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume()}catch(e){}}
@@ -133,24 +148,22 @@ function loadRound(){
   var charB=PP_CHARS[Math.floor(Math.random()*PP_CHARS.length)];
   
   currentA=a;currentB=b;currentCharA=charA;currentCharB=charB;
-  document.getElementById('equation').textContent=a+' + '+b+' = ?';
   speak(a + ' ' + charA.name + ' mais ' + b + ' ' + charB.name + '?', 'pt-PT');
-  
-  // Show character copies — each operand in its own row
+
+  // Visual sum: badge (number once) + character copies per card
   var rows=document.getElementById('pokeRows');
   rows.innerHTML='';
-  
-  var rowA=document.createElement('div');
-  rowA.className='poke-row';
-  rowA.appendChild(buildPokeCol(charA,a));
+  rows.appendChild(buildPokeCard(charA,a));
   var plus=document.createElement('div');
-  plus.className='plus-sign';plus.textContent='+';
-  rowA.appendChild(plus);
-  rowA.appendChild(buildPokeCol(charB,b));
+  plus.className='op-sign';plus.textContent='+';
+  rows.appendChild(plus);
+  rows.appendChild(buildPokeCard(charB,b));
   var eq=document.createElement('div');
-  eq.className='eq-sign';eq.textContent='?';
-  rowA.appendChild(eq);
-  rows.appendChild(rowA);
+  eq.className='op-sign';eq.textContent='=';
+  rows.appendChild(eq);
+  ansBubble=document.createElement('div');
+  ansBubble.className='answer-bubble';ansBubble.textContent='?';
+  rows.appendChild(ansBubble);
   
   // Options
   var opts=[correct];
@@ -171,7 +184,12 @@ function loadRound(){
   document.getElementById('feedback').textContent='';
 }
 
-function buildPokeCol(char, count){
+function buildPokeCard(char, count){
+  var card=document.createElement('div');
+  card.className='poke-card';
+  var badge=document.createElement('div');
+  badge.className='badge';badge.textContent=count;
+  card.appendChild(badge);
   var group=document.createElement('div');
   group.className='poke-group';
   for(var i=0;i<count;i++){
@@ -180,10 +198,8 @@ function buildPokeCol(char, count){
     img.style.animationDelay=(i*0.05)+'s';
     group.appendChild(img);
   }
-  var label=document.createElement('div');
-  label.className='label';label.textContent=count;
-  group.appendChild(label);
-  return group;
+  card.appendChild(group);
+  return card;
 }
 
 function checkAnswer(selected,correct){
@@ -199,7 +215,7 @@ function checkAnswer(selected,correct){
     document.getElementById('feedback').textContent='✅ '+correct+'!';
     document.getElementById('feedback').className='feedback ok';
     chosen.classList.add('correct');
-    document.getElementById('equation').textContent=document.getElementById('equation').textContent.replace('?',correct);
+    if(ansBubble){ansBubble.textContent=correct;ansBubble.classList.add('win');}
     speak(correct.toString(), 'pt-PT');
     setTimeout(loadRound,1500);
   }else{
